@@ -1,0 +1,50 @@
+---
+title: "Data Cleaning"
+author: "He YOU (Libby)"
+date: "4/30/2018"
+output: html_document
+---
+
+```{r}
+library(stringr)
+library(lubridate)
+```
+
+```{r}
+data = read.csv("311_Service_Requests_2017.csv")
+```
+
+```{r}
+str(data)
+```
+
+## Add a new column named "Complaint.SubType" with subtypes of complaint subtracted from Complaint.Type
+```{r}
+data$Complaint.Type = as.character(data$Complaint.Type)
+data$Complaint.SubType = str_sub(data$Complaint.Type,start = 9)
+data$Complaint.SubType = as.factor(data$Complaint.SubType)
+data$Complaint.Type = as.factor(data$Complaint.Type)
+```
+
+
+```{r}
+data$Created.Date = mdy_hms(data$Created.Date)
+data$Closed.Date = mdy_hms(data$Closed.Date)
+data$Due.Date = mdy_hms(data$Due.Date)
+data$Resolution.Action.Updated.Date = mdy_hms(data$Resolution.Action.Updated.Date)
+```
+
+## Add new columns named Created.Month, Created.Weekday, Created.Time and Created.Hour to store the month, day of the week, time and hour of the day for created date of the complaint.
+
+```{r}
+data$Created.Month = month(data$Created.Date,label = T, abbr = T)
+data$Created.Weekday = wday(data$Created.Date,label = T, abbr = T)
+data$Created.Time = str_sub(data$Created.Date,start = 12)
+data$Created.Time = hms(data$Created.Time)
+data$Created.Hour = hour(data$Created.Date)
+```
+
+## Add a new column named Date.Diff to calculate the difference between created date and closed data in seconds.
+```{r}
+data$Date.Diff = data$Closed.Date - data$Created.Date
+```
