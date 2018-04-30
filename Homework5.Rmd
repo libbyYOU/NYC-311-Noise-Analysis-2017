@@ -1,0 +1,87 @@
+---
+title: "Homework5"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r}
+library(rvest)
+library(dplyr)
+library(ggplot2)
+#Case1.1
+page1 ="https://en.wikipedia.org/wiki/List_of_most-viewed_YouTube_videos"
+p1 = page1 %>%
+  read_html()%>%
+  html_nodes(xpath ='//*[@id="mw-content-text"]/div/table[1]') %>%
+  html_table(fill=TRUE)
+p1=p1[[1]]
+p1=p1[-101,-7] #remove row 101 and colomn 7
+#Case1.2
+p1%>%
+  filter(grepl("Justin Bieber",x=p1$`Uploader / artist`))
+```
+There are 4 videos in the top 100 include Justin Bieber as the uploader / artist.
+
+```{r}
+#Case1.3
+library(lubridate)
+p1$`Upload date`=mdy(p1$`Upload date`)
+
+
+str(p1)
+p2=p1%>%group_by(YearUploaded=year(`Upload date`))%>%
+  summarise(count=n())
+
+ggplot(p2,aes(x=YearUploaded,
+              y=count))+
+  geom_col()+
+  scale_x_continuous(breaks =c(2007:2017) ,labels = c(2007:2017))+
+  ggtitle("Top 100 Most Viewed YouTube Videos by Upload Year")+
+  theme_bw()
+ 
+```
+
+```{r}
+#Case2.1
+library(maps)
+library(ggmap)
+LosAngeles=qmap(location = "Los Angeles", zoom = 10, maptype ="roadmap", color="bw") 
+LosAngeles
+```
+
+```{r}
+#Case2.2
+data=read.csv("collision.csv")
+LosAngeles+
+  geom_point(data=data,
+             aes(x = LON, y = LAT),
+                 color="darkblue", alpha=0.01)
+```
+```{r}
+data=data%>%
+  mutate(KSI=ifelse(HighestDegreeofInjury%in%c("Fatal","Severe Injury"),"Yes","No"))
+  
+LosAngeles+
+  stat_bin_2d(data =data,
+             aes(x = LON, y = LAT,fill=KSI), 
+             size = 0.01, alpha=0.5,bins=100,color=black)+
+             scale_fill_manual(values = c("black","red"))
+```
+```{r}
+datacrime=data%>%
+  filter(KSI=="Yes")
+  
+datacrime$CollisionDayofWeek=factor(datacrime$CollisionDayofWeek,levels = c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
+centralLA=qmap(location = "Central LA", zoom = 12, color="bw") 
+centralLA
+centralLA+
+    stat_density_2d(data =datacrime,
+             aes(x = LON, y = LAT,fill = ..level.., alpha = ..level..), 
+             bins=5,geom = "polygon")+
+             scale_fill_gradient(low="black",high="red")+
+  facet_wrap(~CollisionDayofWeek, nrow = 3)+
+  theme(legend.position = 'none')+
+  ggtitle("KSI Collisions by Day of the Week")
+  
+```
