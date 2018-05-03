@@ -48,3 +48,8 @@ data$Created.Hour = hour(data$Created.Date)
 ```{r}
 data$Date.Diff = data$Closed.Date - data$Created.Date
 ```
+
+## Save the file
+```{r}
+save(data, file = "data.csv")
+```
