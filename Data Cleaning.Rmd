@@ -46,7 +46,7 @@ data$Created.Hour = hour(data$Created.Date)
 
 ## Add a new column named Date.Diff to calculate the difference between created date and closed data in seconds.
 ```{r}
-data$Date.Diff = data$Closed.Date - data$Created.Date
+data$Date.Diff_hour = difftime(data$Closed.Date,data$Created.Date,units = "days")
 ```
 
 ## Save the file
