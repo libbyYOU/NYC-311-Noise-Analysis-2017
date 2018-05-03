@@ -7,34 +7,40 @@ ui <- fluidPage(
   titlePanel(title = "NYC 311 Service Requests on Noises in 2017", windowTitle = "NYC 311 Service"),
   
   sidebarLayout(
+    
     sidebarPanel(
+      
+      helpText("Choose the following to display:"),
+      
       checkboxGroupInput(
         inputId = "type",
-        label = "Choose the type of noise to display:",
-        choices = c("Commercial", "Helicopter", "House of Worship", "Park", "Residential", "Street/Sidewalk", "Vehicle", "Others" = "")
+        label = "Type of noise",
+        choices = c("Commercial", "Helicopter", "House of Worship", "Park", "Residential", "Street/Sidewalk", "Vehicle", "Others" = ""),
+        selected = c("Commercial", "Helicopter", "House of Worship", "Park", "Residential", "Street/Sidewalk", "Vehicle", "")
       ),
       
       sliderInput(
         inputId = "time",
-        label = "Choose the interval time bewtween the case was created and closed:",
-        min = 0, max = 100, value = 0, step = 1
+        label = "Duration time in days",
+        min = 1, max = 218, value = 1, step = 1
       ),
       
       selectizeInput(
         inputId = "month",
-        label = "Month:",
+        label = "Month",
         choices = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
       ),
       
       checkboxGroupInput(
         inputId = "weekday",
-        label = "Day of the Week:",
-        choices = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        label = "Day of the Week",
+        choices = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
+        selected = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
       )
     ),
     
     mainPanel(
-      plotOutput(outputId = "map")
+      plotOutput(outputId = "map", width = "100%", height = "700px")
     )
   )
   
@@ -42,14 +48,16 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   complaint = reactive({
-    data = read.csv("data.csv")
-    data %>%
-      filter(Complaint.SubType == input$type, Date.Diff == input$time, Created.Month == input$month, Created.Weekday == input$weekday)
+    complaint = data %>%
+      filter(Complaint.SubType == input$type, 
+             as.numeric(Date.Diff_day, rm.na = T) <= input$time, 
+             Created.Month == input$month, 
+             Created.Weekday == input$weekday)
   })
   
   output$map = renderPlot({
-    qmap("New York City", maptype = "roadmap", zoom = 14, color = "bw") +
-      geom_point(data(),aes(x = Longitude, y = Latitude))
+    qmap("New York", maptype = "roadmap", color = "bw") +
+      geom_point(data = complaint(),aes(x = Longitude, y = Latitude))
   })
 }
 
