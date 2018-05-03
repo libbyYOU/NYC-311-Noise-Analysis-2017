@@ -11,7 +11,7 @@ library(lubridate)
 ```
 
 ```{r}
-data = read.csv("311_Service_Requests_2017.csv")
+data = read.csv("311_Service_Requests_2017.csv",na.strings = "")
 ```
 
 ```{r}
