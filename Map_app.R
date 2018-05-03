@@ -1,3 +1,6 @@
+library(dplyr)
+library(ggplot2)
+library(ggmap)
 library(shiny)
 
 ui <- fluidPage(
@@ -5,11 +8,28 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      selectInput(
+      checkboxGroupInput(
         inputId = "type",
         label = "Choose the type of noise to display:",
-        choices = c("All", "Commercial", "Helicopter", "House of Worship", "Park", "Residential", "Street/Sidewalk", "Vehicle"),
-        selected = "All"
+        choices = c("Commercial", "Helicopter", "House of Worship", "Park", "Residential", "Street/Sidewalk", "Vehicle", "Others" = "")
+      ),
+      
+      sliderInput(
+        inputId = "time",
+        label = "Choose the interval time bewtween the case was created and closed:",
+        min = 0, max = 100, value = 0, step = 1
+      ),
+      
+      selectizeInput(
+        inputId = "month",
+        label = "Month:",
+        choices = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+      ),
+      
+      checkboxGroupInput(
+        inputId = "weekday",
+        label = "Day of the Week:",
+        choices = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
       )
     ),
     
@@ -21,7 +41,16 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  complaint = reactive({
+    data = read.csv("data.csv")
+    data %>%
+      filter(Complaint.SubType == input$type, Date.Diff == input$time, Created.Month == input$month, Created.Weekday == input$weekday)
+  })
   
+  output$map = renderPlot({
+    qmap("New York City", maptype = "roadmap", zoom = 14, color = "bw") +
+      geom_point(data(),aes(x = Longitude, y = Latitude))
+  })
 }
 
 shinyApp(ui, server)
