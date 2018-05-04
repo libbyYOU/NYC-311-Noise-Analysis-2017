@@ -8,6 +8,7 @@ output: html_document
 ```{r}
 library(stringr)
 library(lubridate)
+library(dplyr)
 ```
 
 ```{r}
@@ -49,7 +50,18 @@ data$Created.Hour = hour(data$Created.Date)
 data$Date.Diff_day = difftime(data$Closed.Date,data$Created.Date,units = "days")
 ```
 
+## Select columns that will be used
+```{r}
+data = data %>%
+  select(-c(Taxi.Company.Borough:Bridge.Highway.Segment,Street.Name:Intersection.Street.2,BBL:Vehicle.Type))
+```
+
+```{r}
+str(data)
+```
+
+
 ## Save the file
 ```{r}
-save(data, file = "data.csv")
+save(data, file = "~/Documents/USC/DSO-545 /Final Project/545 NYC final/data.RData")
 ```
