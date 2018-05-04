@@ -9,6 +9,8 @@ output: html_document
 library(dplyr)
 library(stringr)
 ```
+
+
 ```{r}
 load("data.RData")
 ```
