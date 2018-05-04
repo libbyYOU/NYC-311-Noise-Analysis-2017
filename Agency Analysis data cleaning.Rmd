@@ -1,0 +1,300 @@
+---
+title: "Agency analysis data cleaning"
+author: "He YOU (Libby)"
+date: "5/1/2018"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(stringr)
+```
+```{r}
+load("data.RData")
+```
+
+
+## a new dataset
+### We only deal with closed cases
+```{r}
+data.agency = data[data$Status=="Closed",]
+data.agency$Resolution.Description = as.character(data.agency$Resolution.Description)
+```
+
+```{r}
+data.agency = data.agency %>%
+  mutate(Level = 0)
+```
+
+### Only 9 cases with no solution discriptions
+```{r}
+nrow(data.agency[is.na(data.agency$Resolution.Description),])
+```
+### Export Closed into RData file
+```{r}
+save(data.agency,file = "~/Documents/USC/DSO-545 /Final Project/545 NYC final/Closed.RData")
+```
+
+
+### only deal with the closed data with a resolution description
+```{r}
+data.agency=data.agency[!is.na(data.agency$Resolution.Description),]
+```
+
+
+### transfer number
+### According to resolutions given by the agencies, we managed to divide these 42 types into 3 levels based on the importance determined by the agencies. Specifically, Level_1: respond or investigation required; Leve_2: resolved or closed by referring or contacting; Level_3: respond is unnecessary.
+Data cleaning of Level_1
+```{r}
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection attempted to inspect this complaint but[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection attempted to investigate this complaint[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection conducted an inspection and determined[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection determined that an inspection is warranted[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection did not observe a violation[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection has inspected your complaint and determined that further investigation is required[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection investigated this complaint[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection observed a violation[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The New York City Economic Development Corporation determined that the helicopter tour operator was operating within the limits[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Police Department issued a summons[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Police Department made an arrest[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Police Department responded and upon arrival those responsible for[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Police Department responded to the complaint and a report[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Police Department responded to the complaint and took action[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Police Department responded to the complaint and with the information available [.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"The Police Department responded to the complaint but officers were unable to gain entry[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+level_1=str_detect(data.agency$Resolution.Description,"Your complaint has been received by the Police Department and it has been determined that a long-term investigation[.*]?")
+data.agency$Level[level_1]="Level_1"
+
+```
+
+
+Data cleaning of Level_2
+```{r}
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection determined that an inspection is not warranted[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection determined that this complaint is not under its jurisdiction and referred[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection received a letter or phone call from the alleged dog owner[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection requires an appointment[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection requires contact with the complainant[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection requires contact with the complainant[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection researched this complaint[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection resolved this complaint[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection scheduled an inspection[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection sent a letter to the complainant[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The New York City Economic Development Corporation received your complaint. You did not provide enough information[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"The Police Department reviewed your complaint and provided additional information[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"Your complaint has been forwarded to the New York Police Department for a non-emergency response[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"Your complaint has been received by the Police Department and additional information[.*]?")
+data.agency$Level[level_2]="Level_2"
+
+level_2=str_detect(data.agency$Resolution.Description,"Your complaint has been submitted to the New York City Economic Development Corporation for further investigation[.*]?")
+data.agency$Level[level_2]="Level_2"
+```
+
+Level_3
+```{r}
+data.agency$Level[data.agency$Level==0]="level_3"
+```
+
+
+### importance
+
+```{r}
+data.level1=data.agency[data.agency$Level=="Level_1",]
+```
+
+
+```{r}
+data.level1$Problem.Solution=0
+```
+
+### whether a level1 case has solution
+
+fill the ones with a solution
+```{r}
+No=str_detect(data.level1$Resolution.Description,"The Department of Environmental Protection attempted to inspect this complaint but[.*]?")
+data.level1$Problem.Solution[No]="No"
+
+No=str_detect(data.level1$Resolution.Description,"The Department of Environmental Protection attempted to investigate[.*]?")
+data.level1$Problem.Solution[No]="No"
+
+No=str_detect(data.level1$Resolution.Description,"The Police Department responded to the complaint but[.*]?")
+data.level1$Problem.Solution[No]="No"
+```
+
+```{r}
+data.level1$Problem.Solution[data.level1$Problem.Solution==0]="Yes"
+```
+
+### Results
+Add a column "Result/Details", if there is a solution to the complaint, then show the specific results; if there is no solution to the complain, will show the reason why the investigation doesn't work.
+
+```{r}
+data.level1$Result.Detail=0
+```
+
+## Reasons for no results:
+
+```{r}
+No=str_detect(data.level1$Resolution.Description,"[.*]?gain[.*]?")
+data.level1$Result.Detail[No]="Entry unobtainable"
+
+No=str_detect(data.level1$Resolution.Description,"[.*]?address was incorrect[.*]?")
+data.level1$Result.Detail[No]="Incorrect address"
+```
+
+
+## Resolution for with results
+```{r}
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?did not observe a violation[.*]?")
+data.level1$Result.Detail[Yes]="No evidence of violation"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?operating within the limits[.*]?")
+data.level1$Result.Detail[Yes]="No evidence of violation"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?no evidence of the violation[.*]?")
+data.level1$Result.Detail[Yes]="No evidence of violation"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?responsible for the condition were gone[.*]?")
+data.level1$Result.Detail[Yes]="No evidence of violation"
+
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?observed a violation[.*]?")
+data.level1$Result.Detail[Yes]="Violation resolved"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?in response to the complaint[.*]?")
+data.level1$Result.Detail[Yes]="Violation resolved"
+
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?signs are not warranted[.*]?")
+data.level1$Result.Detail[Yes]="Condition fixed"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?shut the running hydrant[.*]?")
+data.level1$Result.Detail[Yes]="Condition fixed"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?report was prepared[.*]?")
+data.level1$Result.Detail[Yes]="Condition fixed"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?took action to fix the condition[.*]?")
+data.level1$Result.Detail[Yes]="Condition fixed"
+
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?inspection is warranted to investigate[.*]?")
+data.level1$Result.Detail[Yes]="Further investigation"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?further investigation[.*]?")
+data.level1$Result.Detail[Yes]="Further investigation"
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?long-term investigation[.*]?")
+data.level1$Result.Detail[Yes]="Further investigation"
+
+
+Yes=str_detect(data.level1$Resolution.Description,"[.*]?referred[.*]?")
+data.level1$Result.Detail[Yes]="Referred"
+
+```
+
+
+```{r}
+data.level1 = data.level1 %>%
+  select(Unique.Key,Created.Date, Closed.Date,Agency, Complaint.Type, Descriptor,Status, Resolution.Description,Resolution.Action.Updated.Date, Latitude, Longitude,Complaint.SubType, Created.Month,Created.Weekday, Created.Time, Created.Hour, Date.Diff_day, Level,Problem.Solution, Result.Detail)
+```
+
+
+
+
+### Exporting to csv
+```{r}
+save(data.level1,file = "~/Documents/USC/DSO-545 /Final Project/545 NYC final/level1.RData")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
