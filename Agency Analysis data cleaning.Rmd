@@ -260,6 +260,11 @@ data.level1 = data.level1 %>%
 ```
 
 
+```{r}
+data.level1$Level = as.factor(data.level1$Level)
+data.level1$Problem.Solution = as.factor(data.level1$Problem.Solution)
+data.level1$Result.Detail = as.factor(data.level1$Result.Detail)
+```
 
 
 ### Exporting to csv
