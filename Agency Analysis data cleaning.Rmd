@@ -15,37 +15,30 @@ library(stringr)
 load("data.RData")
 ```
 
-
-## a new dataset
-### We only deal with closed cases
+## Create a new dataset only dealing with closed cases, since only closed cases have solutions
 ```{r}
 data.agency = data[data$Status=="Closed",]
 data.agency$Resolution.Description = as.character(data.agency$Resolution.Description)
 ```
+
+
+```{r}
+nrow(data.agency[is.na(data.agency$Resolution.Description),])
+```
+We found that only 9 closed complaints are recorded without a resolution, which is a minimal number. Thus, we only focus on those with a resolution.
+
+```{r}
+data.agency=data.agency[!is.na(data.agency$Resolution.Description),]
+```
+
+#### Depending on resolution description, we chould see agency's evaluation towards these complaints, among the 41 categories of Resolutions. And we divided them into 3 levels: Level1 - investigation or respond needed; Level2 - could be resolved or closed by referring or contacting; Level3 - respond is unnecessary. Then we create a column named Leve to show which importance level the complaint belongs to.
 
 ```{r}
 data.agency = data.agency %>%
   mutate(Level = 0)
 ```
 
-### Only 9 cases with no solution discriptions
-```{r}
-nrow(data.agency[is.na(data.agency$Resolution.Description),])
-```
-### Export Closed into RData file
-```{r}
-save(data.agency,file = "~/Documents/USC/DSO-545 /Final Project/545 NYC final/Closed.RData")
-```
 
-
-### only deal with the closed data with a resolution description
-```{r}
-data.agency=data.agency[!is.na(data.agency$Resolution.Description),]
-```
-
-
-### transfer number
-### According to resolutions given by the agencies, we managed to divide these 42 types into 3 levels based on the importance determined by the agencies. Specifically, Level_1: respond or investigation required; Leve_2: resolved or closed by referring or contacting; Level_3: respond is unnecessary.
 Data cleaning of Level_1
 ```{r}
 level_1=str_detect(data.agency$Resolution.Description,"The Department of Environmental Protection attempted to inspect this complaint but[.*]?")
@@ -155,8 +148,12 @@ Level_3
 data.agency$Level[data.agency$Level==0]="level_3"
 ```
 
+## Export Closed into RData file
+```{r}
+save(data.agency,file = "~/Documents/USC/DSO-545 /Final Project/545 NYC final/Closed.RData")
+```
 
-### importance
+### Complaints with importance level 1
 
 ```{r}
 data.level1=data.agency[data.agency$Level=="Level_1",]
@@ -169,7 +166,7 @@ data.level1$Problem.Solution=0
 
 ### whether a level1 case has solution
 
-fill the ones with a solution
+For Level1 cases, some has specific resolution, but some are not given an actual resolution. Thus, we create a column called Resolution.Description
 ```{r}
 No=str_detect(data.level1$Resolution.Description,"The Department of Environmental Protection attempted to inspect this complaint but[.*]?")
 data.level1$Problem.Solution[No]="No"
