@@ -24,6 +24,7 @@ str(data)
 data$Complaint.Type = as.character(data$Complaint.Type)
 data$Complaint.SubType = str_sub(data$Complaint.Type,start = 9)
 data$Complaint.SubType = as.factor(data$Complaint.SubType)
+str_replace_all(data$Complaint.SubType,"^\\s*$","Others")
 data$Complaint.Type = as.factor(data$Complaint.Type)
 ```
 
@@ -63,5 +64,5 @@ str(data)
 
 ## Save the file
 ```{r}
-save(data, file = "~/Documents/USC/DSO-545 /Final Project/545 NYC final/data.RData")
+save(data, file = "data.RData")
 ```
