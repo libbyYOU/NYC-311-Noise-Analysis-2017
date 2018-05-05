@@ -24,7 +24,7 @@ str(data)
 data$Complaint.Type = as.character(data$Complaint.Type)
 data$Complaint.SubType = str_sub(data$Complaint.Type,start = 9)
 data$Complaint.SubType = as.factor(data$Complaint.SubType)
-str_replace_all(data$Complaint.SubType,"^\\s*$","Others")
+data$Complaint.SubType = str_replace_all(data$Complaint.SubType,"^\\s*$","Others")
 data$Complaint.Type = as.factor(data$Complaint.Type)
 ```
 
