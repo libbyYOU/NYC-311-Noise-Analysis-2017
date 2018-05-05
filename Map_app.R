@@ -3,6 +3,15 @@ library(ggplot2)
 library(ggmap)
 library(shiny)
 
+
+load("data.Rdata")
+
+data0 = data %>%
+  select(Complaint.SubType, Date.Diff_day, Created.Month, Created.Weekday, Longitude, Latitude) %>%
+  filter(!is.na(Date.Diff_day), !is.na(Created.Month), !is.na(Created.Weekday), !is.na(Longitude), !is.na(Latitude))
+
+data0$Date.Diff_day = as.numeric(data0$Date.Diff_day)
+
 ui <- fluidPage(
   titlePanel(title = "NYC 311 Service Requests on Noises in 2017", windowTitle = "NYC 311 Service"),
   
@@ -15,14 +24,8 @@ ui <- fluidPage(
       checkboxGroupInput(
         inputId = "type",
         label = "Type of noise",
-        choices = c("Commercial", "Helicopter", "House of Worship", "Park", "Residential", "Street/Sidewalk", "Vehicle", "Others" = ""),
-        selected = c("Commercial", "Helicopter", "House of Worship", "Park", "Residential", "Street/Sidewalk", "Vehicle", "")
-      ),
-      
-      sliderInput(
-        inputId = "time",
-        label = "Duration time in days",
-        min = 1, max = 218, value = 1, step = 1
+        choices = levels(data0$Complaint.SubType),
+        selected = levels(data0$Complaint.SubType)
       ),
       
       selectizeInput(
@@ -34,8 +37,8 @@ ui <- fluidPage(
       checkboxGroupInput(
         inputId = "weekday",
         label = "Day of the Week",
-        choices = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
-        selected = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        choices = levels(data0$Created.Weekday),
+        selected = levels(data0$Created.Weekday)
       )
     ),
     
@@ -48,9 +51,8 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   complaint = reactive({
-    complaint = data %>%
+    complaint = data0 %>%
       filter(Complaint.SubType == input$type, 
-             as.numeric(Date.Diff_day, rm.na = T) <= input$time, 
              Created.Month == input$month, 
              Created.Weekday == input$weekday)
   })
