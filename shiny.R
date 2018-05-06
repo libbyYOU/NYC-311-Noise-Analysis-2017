@@ -11,6 +11,12 @@ data.agency$Complaint.SubType = as.factor(data.agency$Complaint.SubType)
 NewYork=qmap("New York",maptype = "roadmap",color="bw")
 importance = levels(data.agency$Level)
 
+load("data.Rdata")
+data0 = data %>%
+  select(Complaint.SubType, Date.Diff_day, Created.Month, Created.Weekday, Longitude, Latitude) %>%
+  filter(!is.na(Date.Diff_day), !is.na(Created.Month), !is.na(Created.Weekday), !is.na(Longitude), !is.na(Latitude))
+data0$Date.Diff_day = as.numeric(data0$Date.Diff_day)
+
 ui = fluidPage(tabsetPanel(
   ## First Tab
   tabPanel("Overview"),
