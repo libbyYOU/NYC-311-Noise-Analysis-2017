@@ -168,7 +168,7 @@ server=function(input,output) {
     else{
       data6=data.frame(table(data$Descriptor))
       Top5=(data6%>%arrange(-Freq))[1:5,]
-      ggplot(Top5,aes(reorder(Var1,-Freq),Freq))+geom_col(fill="yellow")+ggtitle("Top5 311 Descriptors")+xlab("")+ylab("")+geom_text(aes(label=Freq), vjust=-0.2)+scale_y_continuous(breaks = seq(5000,250000,by=50000), labels = seq(5000,250000,by=50000))+theme_bw()
+      ggplot(Top5,aes(reorder(Var1,-Freq),Freq))+geom_col(fill="yellow")+ggtitle("Top5 311 Problems")+xlab("")+ylab("")+geom_text(aes(label=Freq), vjust=-0.2)+scale_y_continuous(breaks = seq(5000,250000,by=50000), labels = seq(5000,250000,by=50000))+theme_bw()
     }
   )
   
