@@ -7,6 +7,7 @@ load("Closed.RData")
 load("level1.RData")
 load("data.RData")
 data.agency$Created.Hour=as.factor(data.agency$Created.Hour)
+data$Created.Hour = as.factor(data$Created.Hour)
 data.agency$Level = as.factor(data.agency$Level)
 data.agency$Complaint.SubType = as.factor(data.agency$Complaint.SubType)
 data.level1$Complaint.SubType = as.factor(data.level1$Complaint.SubType)
@@ -34,7 +35,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
              checkboxGroupInput(inputId = "weekday",
                                 label = "Choose a weekday to display",
                                 choices = list("Sun", "Mon", "Tue", "Wed", "Thur",  "Fri", "Sat")),
-             
+            
              selectizeInput(inputId = "month",
                             label = "Month",
                             choices = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
@@ -54,24 +55,29 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                                         "Economic Development Corporation"="EDC",
                                         "Environmental" = "DEP"),
                          selected = "NYPD"),
+      
       checkboxGroupInput(inputId = "yh1SubType",
                          label = "Noise Subtype",
                          choices = list("Commercial","Helicopter","House of Worship","Park",
                                         "Residential","Street/Sidewalk","Vehicle","Others"),
                          selected = "Commercial"),
-      selectInput(inputId = "yh1Weekday",
-                  label = "Weekday",
-                  choices = list("Sun",
-                                 "Mon",
-                                 "Tue",
-                                 "Wed",
-                                 "Thur",
-                                 "Fri",
-                                 "Sat")),
+      
+      checkboxGroupInput(inputId = "yh1Weekday",
+                         label = "Weekday",
+                         choices = list("Sun",
+                                        "Mon",
+                                        "Tue",
+                                        "Wed",
+                                        "Thur",
+                                        "Fri",
+                                        "Sat"),
+                         selected = "Sun"),
+      
       sliderInput(inputId = "yh1Hour",
                   label = "Created Hour",
                   min = 0, max = 23,
                   value = c(8,12)),
+      
       checkboxGroupInput(inputId = "yh1Level",
                          label = "Importance Level",
                          choices = list("Level 1:Response or investigation demanded"="Level_1",
@@ -135,8 +141,11 @@ server=function(input,output) {
   ### He YOU's tab 1 results
   datasetyh1=reactive({
     data.agency %>%
-      filter(Agency%in%input$yh1Agency,Created.Weekday==input$yh1Weekday,Complaint.SubType==input$yh1SubType,
-             Created.Hour%in%input$yh1Hour,Level%in%input$yh1Level)
+      filter(Agency%in%input$yh1Agency,
+             Created.Weekday %in% input$yh1Weekday,
+             Complaint.SubType %in% input$yh1SubType,
+             Created.Hour %in% input$yh1Hour,
+             Level %in% input$yh1Level)
   })
   
   output$mapyh1=renderPlot({
@@ -195,10 +204,6 @@ server=function(input,output) {
   
   
   
-  
-
-
-
 
 shinyApp(ui, server)
 
