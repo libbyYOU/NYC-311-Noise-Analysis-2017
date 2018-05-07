@@ -35,6 +35,10 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
              checkboxGroupInput(inputId = "weekday",
                                 label = "Choose a weekday to display",
                                 choices = list("Sun", "Mon", "Tue", "Wed", "Thur",  "Fri", "Sat")),
+             
+             sliderInput(inputId = "hour",
+                         label = "Created Hour",
+                         min = 0, max = 23, value = c(8,12)),
             
              selectizeInput(inputId = "month",
                             label = "Month",
@@ -129,7 +133,8 @@ server=function(input,output) {
     complaint = data %>%
       filter(Complaint.SubType %in% input$type, 
              Created.Month == input$month, 
-             Created.Weekday %in% input$weekday)
+             Created.Weekday %in% input$weekday,
+             Created.Hour %in% input$hour)
   })  
   
   output$map1=renderPlot({
@@ -152,7 +157,7 @@ server=function(input,output) {
     
     NewYork+
       stat_density2d(data=datasetyh1(),aes(x=Longitude, y = Latitude,fill=Level, alpha=..level..),bins=5,
-                     geom = "polygon")
+                     geom = "polygon") 
     
   })
   
