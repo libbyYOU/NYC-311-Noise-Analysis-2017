@@ -1,7 +1,12 @@
 library(shiny)
-library(dplyr)
 library(ggmap)
+library(maps)
+library(stringr)
+library(lubridate)
+library(dplyr)
 library(ggplot2)
+library(gridExtra)
+library(RColorBrewer)
 
 load("Closed.RData")
 load("level1.RData")
