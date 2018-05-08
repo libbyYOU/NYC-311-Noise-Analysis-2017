@@ -79,7 +79,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
             
             # Week of Day
             tabPanel("Compare by Day of Week",
-                     titlePanel("Noise Distribution Analysis by Week of Day",
+                     titlePanel("Noise Distribution Analysis by Day of Week",
                                 windowTitle = "Noise Distribution Analysis by Week of Day"),
                      sidebarPanel(
                        helpText("Choose the following to display"),
