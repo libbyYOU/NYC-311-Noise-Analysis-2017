@@ -47,26 +47,32 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                       titlePanel("Noise Distribution Analysis",
                                  windowTitle = "Noise Distribution Analysis"),
               sidebarPanel(
-              helpText("Choose the following message to display"),
+              helpText("Choose the following to display"),
              
               checkboxGroupInput(inputId = "type",
-                                label = "Noise Subtype",
+                                label = "Noise Type",
                                 choices = list("Commercial","Helicopter","House of Worship","Park",
                                                "Residential","Street/Sidewalk","Vehicle","Others"),
-                                selected = "Commercial"
-              ),
-             
+                                selected = c("Commercial","Helicopter","House of Worship","Park",
+                                            "Residential","Street/Sidewalk","Vehicle","Others")),
+              
+              checkboxInput(inputId = "check",
+                             label = "Differentiate Types by Color"),
+              
+              checkboxGroupInput(inputId = "month",
+                                 label = "Month",
+                                 choices = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+                                 selected = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")),
+              
               checkboxGroupInput(inputId = "weekday",
                                 label = "Choose a weekday to display",
-                                choices = list("Sun", "Mon", "Tue", "Wed", "Thu",  "Fri", "Sat")),
+                                choices = list("Sun", "Mon", "Tue", "Wed", "Thu",  "Fri", "Sat"),
+                                selected = c("Sun", "Mon", "Tue", "Wed", "Thu",  "Fri", "Sat")),
              
               sliderInput(inputId = "hour",
                          label = "Created Hour",
-                         min = 0, max = 23, value = c(8,12)),
-            
-              selectizeInput(inputId = "month",
-                            label = "Month",
-                            choices = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+                         min = 0, max = 23, value = c(0,23))
+
             ),
             mainPanel(
               plotOutput(outputId = "map1", width = "100%", height = "700px"))),
@@ -79,7 +85,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                        helpText("Choose the following message to display"),
                        
                        selectizeInput(inputId = "type2",
-                                          label = "Noise Subtype",
+                                          label = "Noise Type",
                                           choices = list("Commercial","Helicopter","House of Worship","Park",
                                                          "Residential","Street/Sidewalk","Vehicle","Others"),
                                           selected = "Commercial"),
@@ -88,7 +94,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                                    min = 0, max = 23, value = c(0,23))),
                      
                     mainPanel(
-                      plotOutput(outputId = "map2")
+                      plotOutput(outputId = "map2", width = "100%", height = "700px")
                     )),
             
             
@@ -100,7 +106,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                        helpText("Choose the following message to display"),
                        
                        selectizeInput(inputId = "type3",
-                                      label = "Noise Subtype",
+                                      label = "Noise Type",
                                       choices = list("Commercial","Helicopter","House of Worship","Park",
                                                      "Residential","Street/Sidewalk","Vehicle","Others"),
                                       selected = "Commercial"),
@@ -118,7 +124,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
     titlePanel("Complaint Importance Analysis",
                windowTitle = "New York 311 Noise Complaint Analysis"),
     sidebarPanel(
-      helpText("Choose the following message to display"),
+      helpText("Choose the following to display"),
       checkboxGroupInput(inputId = "yh1Agency",
                          label = "Responding Agency",
                          choices = list("New York Police Department" = "NYPD",
@@ -127,7 +133,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                          selected = "NYPD"),
       
       checkboxGroupInput(inputId = "yh1SubType",
-                         label = "Noise Subtype",
+                         label = "Noise Type",
                          choices = list("Commercial","Helicopter","House of Worship","Park",
                                         "Residential","Street/Sidewalk","Vehicle","Others"),
                          selected = "Commercial"),
@@ -165,7 +171,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
            sidebarPanel(
              helpText("Choose the following message to display"),
              checkboxGroupInput(inputId = "yh2SubType",
-                                label = "Complaint Subtype",
+                                label = "Noise Type",
                                 choices = list("Commercial","Helicopter","House of Worship","Park",
                                                "Residential","Street/Sidewalk","Vehicle","Others"),
                                 selected = c("Commercial","Helicopter","House of Worship","Park",
@@ -216,10 +222,19 @@ server=function(input,output) {
   })
   
   output$map1=renderPlot({
-    NewYork2+
-      stat_density2d(data=complaint(),aes(x = Longitude, y = Latitude, fill=..level.., alpha=..level..),bins=5,
-                     geom = "polygon") +
-      theme(legend.position = 'none')
+    if(input$check){
+      NewYork2+
+        stat_density2d(data=complaint(),aes(x = Longitude, y = Latitude, fill = Complaint.SubType, alpha = ..level..),bins=5,
+                       geom = "polygon") +
+        guides(fill=guide_legend(title = "Noise Type"))
+        #theme(legend.title = "Noise Type")
+    }else{
+      NewYork2+
+        stat_density2d(data=complaint(),aes(x = Longitude, y = Latitude, fill = ..level.., alpha = ..level..),bins=5,
+                       geom = "polygon") +
+        scale_fill_gradient(low= "white", high = "#bd0026") +
+        theme(legend.position = 'none')
+    }
   })  
   
   output$map2 = renderPlot({
@@ -228,7 +243,7 @@ server=function(input,output) {
                    aes(x = Longitude, y = Latitude, fill = ..level.., alpha = ..level..),
                    geom = "polygon") +
       scale_fill_gradient(low= "white", high = "#bd0026") +
-      facet_wrap(~Created.Weekday, nrow =2) +
+      facet_wrap(~Created.Weekday, nrow = 3) +
       theme(legend.position = 'none')
   })
   
