@@ -53,11 +53,11 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
              
              checkboxGroupInput(inputId = "weekday",
                                 label = "Choose a weekday to display",
-                                choices = list("Sun", "Mon", "Tue", "Wed", "Thur",  "Fri", "Sat")),
+                                choices = list("Sun", "Mon", "Tue", "Wed", "Thu",  "Fri", "Sat")),
              
              sliderInput(inputId = "hour",
                          label = "Created Hour",
-                         min = 0, max = 23, value = c(8,12)),
+                         min = 0, max = 24, value = c(8,12)),
             
              selectizeInput(inputId = "month",
                             label = "Month",
@@ -98,7 +98,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
       
       sliderInput(inputId = "yh1Hour",
                   label = "Created Hour",
-                  min = 0, max = 23,
+                  min = 0, max = 24,
                   value = c(8,12)),
       
       checkboxGroupInput(inputId = "yh1Level",
