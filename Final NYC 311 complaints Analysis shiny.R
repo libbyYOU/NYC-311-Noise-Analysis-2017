@@ -23,9 +23,9 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
   tabsetPanel(
     ## ChangZhou's Tab
     tabPanel("Overview",
-            titlePanel("311 Service Request in 2017"), 
+            titlePanel("311 Noise Complaints in 2017"), 
             sidebarPanel(
-              helpText("This app is to visualize 311 Service Request data"), 
+              helpText("This app is to visualize 311 Noise Complaints data"), 
               selectInput(inputId = "pie", label = "Share Pie:", choices = c("Complaint Type","Location Type","Agency","Status")),
               selectInput(inputId = "bar", label = "Rank Bar:",choices=c("City","Problem")),
               radioButtons(inputId = "map",label = "Distribution Map:",choices =list("Time distribution","Location distribution","Location distribution by weekday" ))
@@ -71,7 +71,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
              
               sliderInput(inputId = "hour",
                          label = "Created Hour",
-                         min = 0, max = 23, value = c(0,23))
+                         min = 0, max = 24, value = c(0,24))
 
             ),
             mainPanel(
@@ -91,7 +91,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                                           selected = "Commercial"),
                        sliderInput(inputId = "hour2",
                                    label = "Created Hour",
-                                   min = 0, max = 23, value = c(0,23))),
+                                   min = 0, max = 24, value = c(0,24))),
                      
                     mainPanel(
                       plotOutput(outputId = "map2", width = "100%", height = "700px")
@@ -112,7 +112,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                                       selected = "Commercial"),
                        sliderInput(inputId = "hour3",
                                  label = "Created Hour",
-                                 min = 0, max = 23, value = c(0,23))),
+                                 min = 0, max = 24, value = c(0,24))),
                      
                      mainPanel(
                        plotOutput(outputId = "map3", width = "100%", height = "700px")
@@ -136,7 +136,8 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                          label = "Noise Type",
                          choices = list("Commercial","Helicopter","House of Worship","Park",
                                         "Residential","Street/Sidewalk","Vehicle","Others"),
-                         selected = "Commercial"),
+                         selected = c("Commercial","Helicopter","House of Worship","Park",
+                                      "Residential","Street/Sidewalk","Vehicle","Others")),
       
       checkboxGroupInput(inputId = "yh1Weekday",
                          label = "Day of Week",
@@ -151,7 +152,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
       
       sliderInput(inputId = "yh1Hour",
                   label = "Created Hour",
-                  min = 0, max = 23,
+                  min = 0, max = 24,
                   value = c(8,12)),
       
       checkboxGroupInput(inputId = "yh1Level",
