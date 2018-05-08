@@ -29,7 +29,7 @@ ui = fluidPage(tabsetPanel(
            titlePanel("311 Service Request in 2017"), 
     sidebarPanel(
       helpText("This app is to visualize 311 Service Request data"), 
-      selectInput(inputId = "pie", label = "Share Pie:", choices = c("Complaint Type","Location Type","Agecny","Status")),
+      selectInput(inputId = "pie", label = "Share Pie:", choices = c("Complaint Type","Location Type","Agency","Status")),
       selectInput(inputId = "bar", label = "Rank Bar:",choices=c("City","Problem")),
       radioButtons(inputId = "map",label = "Distribution Map:",choices =list("Time distribution","Location distribution","Location distribution by weekday" ))
     ), 
