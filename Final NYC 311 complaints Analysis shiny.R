@@ -1,6 +1,5 @@
 library(shiny)
 library(ggmap)
-library(maps)
 library(stringr)
 library(lubridate)
 library(dplyr)
@@ -17,20 +16,21 @@ data.agency$Level = as.factor(data.agency$Level)
 data.agency$Complaint.SubType = as.factor(data.agency$Complaint.SubType)
 data.level1$Complaint.SubType = as.factor(data.level1$Complaint.SubType)
 NewYork=qmap("New York",maptype = "roadmap",color="bw")
+NewYork2=qmap("New York",maptype = "roadmap",color="bw", zoom = 12)
 
 
 ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
   tabsetPanel(
     ## ChangZhou's Tab
     tabPanel("Overview",
-             titlePanel("311 Service Request in 2017"), 
-             sidebarPanel(
-               helpText("This app is to visualize 311 Service Request data"), 
-               selectInput(inputId = "pie", label = "Share Pie:", choices = c("Complaint Type","Location Type","Agency","Status")),
-               selectInput(inputId = "bar", label = "Rank Bar:",choices=c("City","Problem")),
-               radioButtons(inputId = "map",label = "Distribution Map:",choices =list("Time distribution","Location distribution","Location distribution by weekday" ))
-             ), 
-             mainPanel(
+            titlePanel("311 Service Request in 2017"), 
+            sidebarPanel(
+              helpText("This app is to visualize 311 Service Request data"), 
+              selectInput(inputId = "pie", label = "Share Pie:", choices = c("Complaint Type","Location Type","Agency","Status")),
+              selectInput(inputId = "bar", label = "Rank Bar:",choices=c("City","Problem")),
+              radioButtons(inputId = "map",label = "Distribution Map:",choices =list("Time distribution","Location distribution","Location distribution by weekday" ))
+            ), 
+            mainPanel(
                plotOutput(outputId = "plot1"),
                plotOutput(outputId = "plot2"),
                plotOutput(outputId = "plot3")
@@ -40,31 +40,78 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
   
   ## Yicheng's tab
   tabPanel("Noise Distribution Analysis",
-           titlePanel("Noise Distribution Analysis",
-                      windowTitle = "Noise Distribution Analysis"),
-           sidebarPanel(
-             helpText("Choose the following message to display"),
+           navlistPanel(
              
-             checkboxGroupInput(inputId = "type",
+             # Overall
+             tabPanel("Noise Distribution Analysis",
+                      titlePanel("Noise Distribution Analysis",
+                                 windowTitle = "Noise Distribution Analysis"),
+              sidebarPanel(
+              helpText("Choose the following message to display"),
+             
+              checkboxGroupInput(inputId = "type",
                                 label = "Noise Subtype",
                                 choices = list("Commercial","Helicopter","House of Worship","Park",
-                                               "Residential","Street/Sidewalk","Vehicle","Others")
-             ),
+                                               "Residential","Street/Sidewalk","Vehicle","Others"),
+                                selected = "Commercial"
+              ),
              
-             checkboxGroupInput(inputId = "weekday",
+              checkboxGroupInput(inputId = "weekday",
                                 label = "Choose a weekday to display",
                                 choices = list("Sun", "Mon", "Tue", "Wed", "Thu",  "Fri", "Sat")),
              
-             sliderInput(inputId = "hour",
+              sliderInput(inputId = "hour",
                          label = "Created Hour",
-                         min = 0, max = 24, value = c(8,12)),
+                         min = 0, max = 23, value = c(8,12)),
             
-             selectizeInput(inputId = "month",
+              selectizeInput(inputId = "month",
                             label = "Month",
                             choices = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
-           ),
-           mainPanel(
-             plotOutput(outputId = "map1", width = "100%", height = "700px"))),
+            ),
+            mainPanel(
+              plotOutput(outputId = "map1", width = "100%", height = "700px"))),
+            
+            # Week of Day
+            tabPanel("Compare by Week of Day",
+                     titlePanel("Noise Distribution Analysis by Week of Day",
+                                windowTitle = "Noise Distribution Analysis by Week of Day"),
+                     sidebarPanel(
+                       helpText("Choose the following message to display"),
+                       
+                       selectizeInput(inputId = "type2",
+                                          label = "Noise Subtype",
+                                          choices = list("Commercial","Helicopter","House of Worship","Park",
+                                                         "Residential","Street/Sidewalk","Vehicle","Others"),
+                                          selected = "Commercial"),
+                       sliderInput(inputId = "hour2",
+                                   label = "Created Hour",
+                                   min = 0, max = 23, value = c(0,23))),
+                     
+                    mainPanel(
+                      plotOutput(outputId = "map2")
+                    )),
+            
+            
+            # Month
+            tabPanel("Compare by Month",
+                     titlePanel("Noise Distribution Analysis by Month",
+                                windowTitle = "Noise Distribution Analysis by Month"),
+                     sidebarPanel(
+                       helpText("Choose the following message to display"),
+                       
+                       selectizeInput(inputId = "type3",
+                                      label = "Noise Subtype",
+                                      choices = list("Commercial","Helicopter","House of Worship","Park",
+                                                     "Residential","Street/Sidewalk","Vehicle","Others"),
+                                      selected = "Commercial"),
+                       sliderInput(inputId = "hour3",
+                                 label = "Created Hour",
+                                 min = 0, max = 23, value = c(0,23))),
+                     
+                     mainPanel(
+                       plotOutput(outputId = "map3", width = "100%", height = "700px")
+                     ))
+  )),
   
   ## He YOU's tab 1 
   tabPanel("Agency Response Analysis",
@@ -98,7 +145,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
       
       sliderInput(inputId = "yh1Hour",
                   label = "Created Hour",
-                  min = 0, max = 24,
+                  min = 0, max = 23,
                   value = c(8,12)),
       
       checkboxGroupInput(inputId = "yh1Level",
@@ -156,12 +203,45 @@ server=function(input,output) {
              Created.Hour %in% input$hour)
   })  
   
+  complaint2 = reactive({
+    complaint2 = data %>%
+      filter(Complaint.SubType %in% input$type2,
+             Created.Hour %in% input$hour2)
+  })  
+  
+  complaint3 = reactive({
+    complaint = data %>%
+      filter(Complaint.SubType %in% input$type3,
+             Created.Hour %in% input$hour3)
+  })
+  
   output$map1=renderPlot({
-    NewYork+
-      stat_density2d(data=complaint(),aes(x=Longitude, y = Latitude,fill=..level.., alpha=..level..),bins=5,
+    NewYork2+
+      stat_density2d(data=complaint(),aes(x = Longitude, y = Latitude, fill=..level.., alpha=..level..),bins=5,
                      geom = "polygon") +
       theme(legend.position = 'none')
-  })        
+  })  
+  
+  output$map2 = renderPlot({
+    NewYork2+
+      stat_density2d(data = complaint2(),
+                   aes(x = Longitude, y = Latitude, fill = ..level.., alpha = ..level..),
+                   geom = "polygon") +
+      scale_fill_gradient(low= "white", high = "#bd0026") +
+      facet_wrap(~Created.Weekday, nrow =2) +
+      theme(legend.position = 'none')
+  })
+  
+  output$map3 = renderPlot({
+    NewYork2+
+      stat_density2d(data = complaint3(),
+                     aes(x = Longitude, y = Latitude, fill = ..level.., alpha = ..level..),
+                     geom = "polygon") +
+      scale_fill_gradient(low= "white", high = "#bd0026") +
+      facet_wrap(~Created.Month, nrow = 3) +
+      theme(legend.position = 'none')
+  })
+  
   ### He YOU's tab 1 results
   datasetyh1=reactive({
     data.agency %>%
