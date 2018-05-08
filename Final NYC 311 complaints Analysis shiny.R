@@ -71,7 +71,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
              
               sliderInput(inputId = "hour",
                          label = "Created Hour",
-                         min = 0, max = 24, value = c(0,24))
+                         min = 0, max = 23, value = c(0,23))
 
             ),
             mainPanel(
@@ -91,7 +91,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                                           selected = "Commercial"),
                        sliderInput(inputId = "hour2",
                                    label = "Created Hour",
-                                   min = 0, max = 24, value = c(0,24))),
+                                   min = 0, max = 23, value = c(0,23))),
                      
                     mainPanel(
                       plotOutput(outputId = "map2", width = "100%", height = "700px")
@@ -112,7 +112,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                                       selected = "Commercial"),
                        sliderInput(inputId = "hour3",
                                  label = "Created Hour",
-                                 min = 0, max = 24, value = c(0,24))),
+                                 min = 0, max = 23, value = c(0,23))),
                      
                      mainPanel(
                        plotOutput(outputId = "map3", width = "100%", height = "700px")
@@ -152,7 +152,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
       
       sliderInput(inputId = "yh1Hour",
                   label = "Created Hour",
-                  min = 0, max = 24,
+                  min = 0, max = 23,
                   value = c(8,12)),
       
       checkboxGroupInput(inputId = "yh1Level",
