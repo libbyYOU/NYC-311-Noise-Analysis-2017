@@ -20,7 +20,7 @@ NewYork2=qmap("New York",maptype = "roadmap",color="bw", zoom = 11)
 
 
 ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
-  tabsetPanel(
+               tabsetPanel(
     ## ChangZhou's Tab
     tabPanel("Overview",
             titlePanel("311 Noise Complaints in 2017"), 
@@ -119,80 +119,82 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                      ))
   )),
   
-  ## He YOU's tab 1 
+  ## He YOU's tab  
   tabPanel("Agency Response Analysis",
-    titlePanel("Complaint Importance Analysis",
-               windowTitle = "New York 311 Noise Complaint Analysis"),
-    sidebarPanel(
-      helpText("Choose the following to display"),
-      checkboxGroupInput(inputId = "yh1Agency",
-                         label = "Responding Agency",
-                         choices = list("New York Police Department" = "NYPD",
-                                        "Economic Development Corporation"="EDC",
-                                        "Environmental" = "DEP"),
-                         selected = "NYPD"),
-      
-      checkboxGroupInput(inputId = "yh1SubType",
-                         label = "Noise Type",
-                         choices = list("Commercial","Helicopter","House of Worship","Park",
-                                        "Residential","Street/Sidewalk","Vehicle","Others"),
-                         selected = c("Commercial","Helicopter","House of Worship","Park",
-                                      "Residential","Street/Sidewalk","Vehicle","Others")),
-      
-      checkboxGroupInput(inputId = "yh1Weekday",
-                         label = "Day of Week",
-                         choices = list("Sun",
-                                        "Mon",
-                                        "Tue",
-                                        "Wed",
-                                        "Thu",
-                                        "Fri",
-                                        "Sat"),
-                         selected = "Sun"),
-      
-      sliderInput(inputId = "yh1Hour",
-                  label = "Created Hour",
-                  min = 0, max = 23,
-                  value = c(8,12)),
-      
-      checkboxGroupInput(inputId = "yh1Level",
-                         label = "Importance Level",
-                         choices = list("Level 1:Response or investigation demanded"="Level_1",
-                                        "Level 2:Solved or closed via referring or contacting"="Level_2",
-                                        "Level 3:Response unnecessary"="Level_3"),
-                         selected = "Level_1")
-      ),
-    mainPanel(
-      plotOutput(outputId = "mapyh1",width = "100%", height = "700px"))),
+           tabsetPanel(
+             ## first tab
+             tabPanel("Agency Response Analysis",
+                       titlePanel("Complaint Importance Analysis",
+                                  windowTitle = "New York 311 Noise Complaint Analysis"),
+                       sidebarPanel(
+                         helpText("Choose the following to display"),
+                         checkboxGroupInput(inputId = "yh1Agency",
+                                            label = "Responding Agency",
+                                            choices = list("New York Police Department" = "NYPD",
+                                                           "Economic Development Corporation"="EDC",
+                                                           "Environmental" = "DEP"),
+                                            selected = "NYPD"),
+                         
+                         checkboxGroupInput(inputId = "yh1SubType",
+                                            label = "Noise Type",
+                                            choices = list("Commercial","Helicopter","House of Worship","Park",
+                                                           "Residential","Street/Sidewalk","Vehicle","Others"),
+                                            selected = c("Commercial","Helicopter","House of Worship","Park",
+                                                         "Residential","Street/Sidewalk","Vehicle","Others")),
+                         
+                         checkboxGroupInput(inputId = "yh1Weekday",
+                                            label = "Day of Week",
+                                            choices = list("Sun",
+                                                           "Mon",
+                                                           "Tue",
+                                                           "Wed",
+                                                           "Thu",
+                                                           "Fri",
+                                                           "Sat"),
+                                            selected = "Sun"),
+                         
+                         sliderInput(inputId = "yh1Hour",
+                                     label = "Created Hour",
+                                     min = 0, max = 23,
+                                     value = c(8,12)),
+                         
+                         checkboxGroupInput(inputId = "yh1Level",
+                                            label = "Importance Level",
+                                            choices = list("Level 1:Response or investigation demanded"="Level_1",
+                                                           "Level 2:Solved or closed via referring or contacting"="Level_2",
+                                                           "Level 3:Response unnecessary"="Level_3"),
+                                            selected = "Level_1")
+                       ),
+                       mainPanel(
+                         plotOutput(outputId = "mapyh1",width = "100%", height = "700px"))),
+             tabPanel("Level 1 Resolution Analysis",
+                      titlePanel("Agency Resolution Analysis - Level 1",
+                                 windowTitle = "New York 311 Noise Complaint Analysis"),
+                      sidebarPanel(
+                        helpText("Choose the following message to display"),
+                        checkboxGroupInput(inputId = "yh2SubType",
+                                           label = "Noise Type",
+                                           choices = list("Commercial","Helicopter","House of Worship","Park",
+                                                          "Residential","Street/Sidewalk","Vehicle","Others"),
+                                           selected = c("Commercial","Helicopter","House of Worship","Park",
+                                                        "Residential","Street/Sidewalk","Vehicle","Others"))),
+                      mainPanel(
+                        verticalLayout(
+                          h5("Problem Resolution Status of Level 1", align = "center"),
+                          plotOutput(outputId = "yhcolumn1"),
+                          h5("Resolution Details for cases with specific solutions", align = "center"),
+                          plotOutput(outputId = "yhcolumn2"),
+                          h5("Resolution Details for cases with no specific solution", align = "center"),
+                          plotOutput(outputId = "yhcolumn3"))
+               
+             ))
   
-  ### HeYou's tab 2
-  tabPanel("Agency Resolution Analysis",
-           titlePanel("Agency Relotion Analysis - Level 1",
-                      windowTitle = "New York 311 Noise Complaint Analysis"),
-           sidebarPanel(
-             helpText("Choose the following message to display"),
-             checkboxGroupInput(inputId = "yh2SubType",
-                                label = "Noise Type",
-                                choices = list("Commercial","Helicopter","House of Worship","Park",
-                                               "Residential","Street/Sidewalk","Vehicle","Others"),
-                                selected = c("Commercial","Helicopter","House of Worship","Park",
-                                             "Residential","Street/Sidewalk","Vehicle","Others"))),
-           mainPanel(
-             verticalLayout(
-               h5("Problem Resolution Status of Level 1", align = "center"),
-               plotOutput(outputId = "yhcolumn1"),
-               h5("Resolution Details for cases with specific solutions", align = "center"),
-               plotOutput(outputId = "yhcolumn2"),
-               h5("Resolution Details for cases with no specific solution", align = "center"),
-               plotOutput(outputId = "yhcolumn3")
-           ))
-           )
-           
-           
-           )
+  
+           ))))
+          
              
              
-             )
+             
            
   
 
@@ -258,7 +260,7 @@ server=function(input,output) {
       theme(legend.position = 'none')
   })
   
-  ### He YOU's tab 1 results
+  ### He YOU's results
   datasetyh1=reactive({
     data.agency %>%
       filter(Agency%in%input$yh1Agency,
@@ -276,7 +278,6 @@ server=function(input,output) {
     
   })
   
-  ### He YOU's tab 2 results
   datasetyh2=reactive({
     data.level1 %>%
       filter(Complaint.SubType%in%input$yh2SubType)
