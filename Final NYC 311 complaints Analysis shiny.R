@@ -16,7 +16,7 @@ data.agency$Level = as.factor(data.agency$Level)
 data.agency$Complaint.SubType = as.factor(data.agency$Complaint.SubType)
 data.level1$Complaint.SubType = as.factor(data.level1$Complaint.SubType)
 NewYork=qmap("New York",maptype = "roadmap",color="bw")
-NewYork2=qmap("New York",maptype = "roadmap",color="bw", zoom = 12)
+NewYork2=qmap("New York",maptype = "roadmap",color="bw", zoom = 11)
 
 
 ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
@@ -40,7 +40,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
   
   ## Yicheng's tab
   tabPanel("Noise Distribution Analysis",
-           navlistPanel(
+           tabsetPanel(
              
              # Overall
              tabPanel("Noise Distribution Analysis",
@@ -65,7 +65,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                                  selected = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")),
               
               checkboxGroupInput(inputId = "weekday",
-                                label = "Choose a weekday to display",
+                                label = "Day of Week",
                                 choices = list("Sun", "Mon", "Tue", "Wed", "Thu",  "Fri", "Sat"),
                                 selected = c("Sun", "Mon", "Tue", "Wed", "Thu",  "Fri", "Sat")),
              
@@ -78,7 +78,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
               plotOutput(outputId = "map1", width = "100%", height = "700px"))),
             
             # Week of Day
-            tabPanel("Compare by Week of Day",
+            tabPanel("Compare by Day of Week",
                      titlePanel("Noise Distribution Analysis by Week of Day",
                                 windowTitle = "Noise Distribution Analysis by Week of Day"),
                      sidebarPanel(
@@ -139,7 +139,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                          selected = "Commercial"),
       
       checkboxGroupInput(inputId = "yh1Weekday",
-                         label = "Weekday",
+                         label = "Day of Week",
                          choices = list("Sun",
                                         "Mon",
                                         "Tue",
