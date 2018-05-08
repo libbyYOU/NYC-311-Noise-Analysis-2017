@@ -82,7 +82,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                      titlePanel("Noise Distribution Analysis by Week of Day",
                                 windowTitle = "Noise Distribution Analysis by Week of Day"),
                      sidebarPanel(
-                       helpText("Choose the following message to display"),
+                       helpText("Choose the following to display"),
                        
                        selectizeInput(inputId = "type2",
                                           label = "Noise Type",
@@ -103,7 +103,7 @@ ui = fluidPage(titlePanel("New York 311 Noise Complaints Analysis 2017"),
                      titlePanel("Noise Distribution Analysis by Month",
                                 windowTitle = "Noise Distribution Analysis by Month"),
                      sidebarPanel(
-                       helpText("Choose the following message to display"),
+                       helpText("Choose the following to display"),
                        
                        selectizeInput(inputId = "type3",
                                       label = "Noise Type",
