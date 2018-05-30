@@ -1,0 +1,155 @@
+---
+title: "545 Final"
+author: "He YOU (Libby)"
+date: "5/8/2018"
+output: html_document
+---
+
+```{r}
+library(rvest)
+library(stringr)
+library(dplyr)
+library(lubridate)
+library(ggmap)
+library(tidyr)
+library(ggplot2)
+```
+
+### Case 1
+1)
+
+```{r}
+url="https://en.wikipedia.org/wiki/List_of_earthquakes_in_California"
+data1=url %>%
+  read_html() %>%
+  html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
+  html_table()
+data1=data1[[1]]
+```
+
+2)
+```{r}
+data1=data1[-79,-8]
+data1$Magnitude=str_sub(data1$Mag.,start = 1,end = 3)
+data1$Magnitude=as.numeric(data1$Magnitude)
+```
+
+```{r}
+data1 %>%
+  filter(Area=="North Coast") %>%
+  summarise(Average_Mag=mean(Magnitude))
+```
+
+The average magnitude for earthquakes took place on North coast is 6.64.
+
+### Case 2
+
+3)
+```{r}
+data2 = readRDS("santa_monica_crime.rds")
+```
+
+
+```{r}
+str(data2)
+```
+
+```{r}
+data2$crime=as.factor(data2$crime)
+```
+
+```{r}
+data2 %>%
+  filter(year(date_occurred)==2017) %>%
+  group_by(crime) %>%
+  summarise(total_number=n()) %>%
+  arrange(-total_number) %>%
+  head()
+```
+The most common crime in Santa Monica in 2017 is Larceny - From Vehicle, which has 1343.
+
+
+4)
+
+```{r}
+data2b = data2 %>%
+  filter(crime=="DUI") %>%
+  mutate(Year=year(date_occurred),Weekday=wday(date_occurred)) %>%
+  filter(Year!=2018) %>%
+  group_by(Year,Weekday) %>%
+  summarise(total=n())
+
+data2b$Weekday=factor(data2b$Weekday,levels = c(1,2,3,4,5,6,7),
+                      labels = c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"))
+  
+```
+
+```{r}
+ggplot(data2b,aes(x=Weekday,y=factor(Year),fill=total)) +
+         geom_tile(color="black") +
+  scale_fill_gradient(low = "beige",high = "darkmagenta") +
+  xlab("") +
+  ylab("") +
+  ggtitle("Number of DUIs in Santa Monica by Day of Week and Year") +
+  theme_minimal() +
+  labs(fill="Number of DUIs")
+
+```
+
+From the heatmap, it could be seen that for the same year, DUIs happend more on weekends than weekdays. It could also be concluded that since 2006, number of DUIs was decreasing year by year, in 2017, there were much less DUIs compared with previous years.
+
+```{r}
+SantaMonica=qmap(location = "Santa Monica",maptype="toner-lite", zoom=14)
+```
+5)
+
+```{r}
+data2c=data2 %>%
+  filter(crime=="DUI")
+```
+
+
+```{r}
+SantaMonica +
+  stat_density2d(data=data2c,
+                 aes(x=long,y=lat,fill=..level.., alpha=..level..),
+                 geom = "polygon") +
+  scale_fill_gradient(low = "yellow",high = "firebrick") +
+  ggtitle("Density Plot of DUIs in Santa Monica") +
+  theme(legend.position = 'none')
+  
+```
+
+### Case 3
+
+```{r}
+data3 = read.csv("birds.csv")
+```
+
+6)
+
+This dataset is not tidy because we shall not put average wing lengths as two variables. We should create another variable named "gender" so that each objective (each bird) will has one wing length. 
+
+7)
+```{r}
+data3 = data3 %>%
+  gather(male:female, key = "gender", value = "wing_length")
+
+data3$gender=as.factor(data3$gender)
+```
+
+```{r}
+data3b=data3 %>%
+  group_by(region,gender) %>%
+  summarise(avg_wing_length=mean(wing_length))
+
+ggplot(data3b,aes(x=gender,y=region,fill=avg_wing_length)) +
+  geom_tile() +
+  scale_fill_gradient(low="beige",high="red") +
+  ggtitle("Average Wing Length") +
+  xlab("Gender") +
+  ylab("Region") +
+  theme_minimal()
+```
+
+
